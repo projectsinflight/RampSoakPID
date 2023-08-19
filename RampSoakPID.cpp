@@ -15,7 +15,6 @@
 #include <math.h>
 #include <RunningAverage.h>
 
-
 /*************************** Variables ***************************************/
 float Kp = KP_DEFAULT;
 float Ki = KI_DEFAULT;
@@ -42,7 +41,6 @@ float desiredRampRate = 0.0;
 RunningAverage rampRateAvg(N_RAMP_AVG);
 bool debugPIDOn = false;
 RunningAverage DValAvg(N_DVAL_AVG);
-
 
 /*************************** Functions ***************************************/
 
@@ -99,12 +97,11 @@ void resetPid()
   previousError = 0;
   previousErrorInitialized = false;
   previousVal = 0;
-  // currentVal = 0;
   previousValInitialized = false;
-  // IVal = 0;
-  rampRateAvg.clear();
+  if (IVal < 0) {
+    IVal = 0; // this will make the system recover faster if I is negative
+  }
   rampRate = 0.0;
-  DValAvg.clear();
 }
 
 // set debug on/off
@@ -191,17 +188,17 @@ float pidStep(float val) {
 // prints PID values to terminal
 void debugPID() {
 
-  Serial.print("currentVal:"); Serial.print(currentVal);   Serial.print(",");
-  Serial.print("targetVal:");  Serial.print(targetVal);    Serial.print(",");
-  Serial.print("rampRate:");   Serial.print(rampRateAvg.getAverage());     Serial.print(",");
-  Serial.print("desiredRampRate:");   Serial.print(desiredRampRate);     Serial.print(",");
-  Serial.print("error:");     Serial.print(error);        Serial.print(",");
-  Serial.print("P:");         Serial.print(PVal);         Serial.print(",");
-  Serial.print("I:");         Serial.print(IVal);         Serial.print(",");
-  Serial.print("D:");         Serial.print(DValAvg.getAverage());         Serial.print(",");
-  Serial.print("Kp:");         Serial.print(Kp);         Serial.print(",");
-  Serial.print("Ki:");         Serial.print(Ki);         Serial.print(",");
-  Serial.print("Kd:");         Serial.print(Kd);         Serial.print(",");
+  Serial.print("currentVal:");        Serial.print(currentVal);                   Serial.print(",");
+  Serial.print("targetVal:");         Serial.print(targetVal);                    Serial.print(",");
+  Serial.print("rampRate:");          Serial.print(rampRateAvg.getAverage());     Serial.print(",");
+  Serial.print("desiredRampRate:");   Serial.print(desiredRampRate);              Serial.print(",");
+  Serial.print("error:");             Serial.print(error);                        Serial.print(",");
+  Serial.print("P:");                 Serial.print(PVal);                         Serial.print(",");
+  Serial.print("I:");                 Serial.print(IVal);                         Serial.print(",");
+  Serial.print("D:");                 Serial.print(DValAvg.getAverage());         Serial.print(",");
+  Serial.print("Kp:");                Serial.print(Kp);                           Serial.print(",");
+  Serial.print("Ki:");                Serial.print(Ki);                           Serial.print(",");
+  Serial.print("Kd:");                Serial.print(Kd);                           Serial.print(",");
   Serial.println("");
 }
 
